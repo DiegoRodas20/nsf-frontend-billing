@@ -1,0 +1,27 @@
+<div *ngIf="formControlError.touched && formControlError.errors" class="text-xs font-semibold p-error block mt-1">
+
+    <div *ngIf="formControlError.errors['required']" @errorAnimation>
+        Este campo es requerido.
+    </div>
+
+    <div *ngIf="formControlError.errors['email']" @errorAnimation>
+        Verificar la dirección del email.
+    </div>
+
+    <div *ngIf="formControlError.errors['maxlength']" @errorAnimation>
+        Debe tener como máximo {{maxLength}} caracteres.
+    </div>
+
+    <div *ngIf="formControlError.errors['errorLengthPhone']" @errorAnimation>
+        Por favor, ingresa un teléfono válido
+    </div>
+    
+    <div *ngIf="formControlError.errors['rucValidator']" @errorAnimation>
+        El RUC debe de empezar con los dígitos 1 o 2
+    </div>
+
+    <div *ngIf="formControlError.errors['pattern']" @errorAnimation>
+        Por favor, ingresa un correo válido
+    </div>
+
+</div>

@@ -1,0 +1,224 @@
+<div class="grid justify-content-center">
+
+    <ng-container [formGroup]="formFilterServiceOrder">
+        <div class="col-12 md:col-6 pt-6">
+            <span class="p-float-label p-input-icon-right w-full">
+                <i class="pi pi-search"></i>
+                <input 
+                    class="search w-full" 
+                    pInputText
+                    formControlName="term" />
+                <label>¿Buscas una liquidación por cliente?</label>
+            </span>
+        </div>
+
+        <div *ngIf="!viewFilter" @enter class="col-12 md:col-8 text-center">
+            <button 
+                pButton
+                pRipple 
+                label="Mostrar filtros" 
+                class="p-button-text text-500 font-bold" 
+                icon="pi pi-filter"
+                iconPos="left" 
+                (click)="viewFilter = true">
+            </button>
+        </div>
+
+        <div *ngIf="viewFilter" @enter class="col-12 md:col-8 card mt-4">
+            <div class="grid p-fluid">
+
+                <!-- Empresa -->
+                <div class="col-12 md:col-3">
+                    <span class="p-float-label">
+                        <p-dropdown
+                            [options]="lCompany"
+                            [autoDisplayFirst]="false"
+                            [showClear]="true"
+                            optionLabel="name" 
+                            optionValue="id" 
+                            formControlName="company"
+                            (onChange)="onChangeCompany($event.value)">
+                        </p-dropdown>
+                        <label>Empresa</label>
+                    </span>
+                </div>
+
+                <!-- Sucursal -->
+                <div class="col-12 md:col-3">
+                    <span class="p-float-label">
+                        <p-dropdown 
+                            [options]="lBranchOffice" 
+                            [autoDisplayFirst]="false"
+                            optionLabel="name" 
+                            optionValue="id" 
+                            formControlName="branch_office" 
+                            [showClear]="true"
+                            (onChange)="onChangeBranchOffice($event.value)">
+                        </p-dropdown>
+                        <label>Sucursal</label>
+                    </span>
+                </div>
+
+                <!-- Unidad -->
+                <div class="col-12 md:col-3">
+                    <span class="p-float-label">
+                        <p-dropdown 
+                            [options]="lBusinessUnit" 
+                            [autoDisplayFirst]="false" 
+                            optionLabel="name" 
+                            optionValue="id"
+                            formControlName="business_unit" 
+                            [showClear]="true"
+                            (onChange)="onChangeBusinessUnit($event.value)">
+                        </p-dropdown>
+                        <label>Unidad</label>
+                    </span>
+                </div>
+
+                <!-- Almacen  -->
+                <div class="col-12 md:col-3">
+                    <span class="p-float-label">
+                        <p-dropdown 
+                            [options]="lStore" 
+                            [autoDisplayFirst]="false" 
+                            optionLabel="name" 
+                            optionValue="id"
+                            formControlName="store" 
+                            [showClear]="true">
+                        </p-dropdown>
+                        <label>Almacen</label>
+                    </span>
+                </div>
+
+                <!-- Estado -->
+                <div class="col-12 md:col-3">
+                    <span class="p-float-label">
+                        <p-dropdown 
+                            [options]="lStatus" 
+                            [autoDisplayFirst]="false" 
+                            optionLabel="name" 
+                            optionValue="id"
+                            formControlName="status" 
+                            [showClear]="true">
+                        </p-dropdown>
+                        <label>Estado</label>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Button -->
+            <div class="col-12 md:col-12 text-center pt-4">
+
+                <!-- Ocultar filtros -->
+                <button 
+                    pButton 
+                    class="b-black text-green-500 px-5 py-2" 
+                    icon="pi pi-filter-slash"
+                    label="Ocultar Filtros" 
+                    (click)="viewFilter = false">
+                </button>
+
+                <!-- Limpiar filtros -->
+                <button 
+                    pButton 
+                    class="b-black px-5 py-2 ml-3" 
+                    icon="pi pi-trash" 
+                    label="Limpiar Filtros"
+                    (click)="clearFilterLiquidation()">
+                </button>
+
+            </div>
+        </div>
+    </ng-container>
+
+    <div class="field col-12 text-center">
+        <button 
+            pButton 
+            class="b-primary px-5 py-2" 
+            label="Crear Liquidación">
+        </button>
+    </div>
+    
+    <ng-container *ngIf="loaderService.opened">
+        <p-skeleton 
+            class="col-12 md:col-12" 
+            borderRadius="20px" 
+            height="20rem">
+        </p-skeleton>
+    </ng-container>
+
+    <div *ngIf="!loaderService.opened" class="col-12 md:col-12">
+        <p-table 
+            [value]="lServiceOrder">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th class="text-center">N° O. Servicio</th>
+                    <th>Fecha Creación</th>
+                    <th>Empresa</th>
+                    <th>Sucursal</th>
+                    <th>Unidad</th>
+                    <th>Almacén</th>
+                    <th>Cliente</th>
+                    <th>Subtotal</th>
+                    <th class="text-center">Estado</th>
+                    <th class="text-center">Opciones</th>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-serviceorder>
+                <tr>
+                    <td class="text-center">{{ serviceorder.id_service_order }}</td>
+                    <td>{{ serviceorder.creation_date | date : "dd/MM/YYYY" }}</td>
+                    <td>{{ serviceorder.company_name }}</td>
+                    <td>{{ serviceorder.branch_office_name }}</td>
+                    <td>{{ serviceorder.business_unit_name }}</td>
+                    <td>{{ serviceorder.store_name }}</td>
+                    <td>{{ serviceorder.client_name }}</td>
+                    <td>{{ serviceorder.subtotal_price }}</td>
+                    <td class="text-center">
+                        <i 
+                            [class]="'pi pi-circle-fill ' + getStatusServiceOrder(serviceorder.status_code)" 
+                            [pTooltip]="serviceorder.status_description">
+                        </i>
+                    </td>
+                    <td class="text-center">
+                        <button 
+                            pButton
+                            class="p-button-text"
+                            (click)="menu.toggle($event); getOptionsByStatus(serviceorder)" 
+                            icon="pi pi-ellipsis-v">
+                        </button>
+                        <p-menu 
+                            #menu 
+                            [model]="options" 
+                            [popup]="true"
+                            appendTo="body">
+                        </p-menu>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+
+    <div class="col-12 md:col-6 align-items-center grid">
+        <p-dropdown 
+                [options]="pageSizeOptions" 
+                (onChange)="onPageSizeChange($event.value); 
+                getAllServiceOrder()">
+        </p-dropdown>
+        <div class="pl-4">
+            <span>
+                Mostrando el intervalo 1 - {{pageSize}} de {{totalRows}} resultados.
+            </span>
+        </div>
+    </div>
+
+    <div class="col-12 md:col-6">
+        <p-paginator 
+                [rows]="pageSize" 
+                [totalRecords]="totalRows" 
+                (onPageChange)="getAllServiceOrder($event.page)">
+        </p-paginator>
+    </div>
+
+</div>
